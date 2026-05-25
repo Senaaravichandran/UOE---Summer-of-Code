@@ -1,0 +1,22 @@
+# Flask Backend
+flask
+flask-cors
+flask-sock
+simple-websocket
+
+# Data Processing
+pandas
+numpy
+
+# Machine Learning
+scikit-learn
+joblib
+
+# HTTP Requests
+requests
+
+# Network Scanning
+shodan
+
+# Notifications
+twilio

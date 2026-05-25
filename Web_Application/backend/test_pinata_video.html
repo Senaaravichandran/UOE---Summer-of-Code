@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinata Video Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        h1 { color: #00ff00; }
+        h2 { color: #ffff00; margin-top: 20px; }
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .log {
+            background: #111;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .log-entry {
+            margin: 3px 0;
+            padding: 2px;
+        }
+        .log-success { color: #00ff00; }
+        .log-error { color: #ff0000; }
+        .log-info { color: #00ffff; }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 Pinata Video Playback Test</h1>
+    
+    <div class="container">
+        <h2>Test Video #1: From Most Recent Alert</h2>
+        <button onclick="testVideoFromAlert()">Test Video From Alert</button>
+        <button onclick="testDirectPinataURL()">Test Direct Pinata URL</button>
+        <button onclick="clearLogs()">Clear Logs</button>
+        
+        <div class="video-container">
+            <video id="testVideo1" controls preload="auto">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <h3>Logs:</h3>
+        <div class="log" id="logs"></div>
+    </div>
+
+    <script>
+        const logsDiv = document.getElementById('logs');
+        const video = document.getElementById('testVideo1');
+        const videoSource = video.querySelector('source');
+
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logsDiv.appendChild(entry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function clearLogs() {
+            logsDiv.innerHTML = '';
+        }
+
+        async function testVideoFromAlert() {
+            clearLogs();
+            log('Fetching alerts from backend...', 'info');
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/alerts/fetch-alerts');
+                const alerts = await response.json();
+                
+                log(`Found ${alerts.length} total alerts`, 'info');
+                
+                // Find Pinata alert
+                const pinataAlert = alerts.find(a => a.pinataUrl && a.pinataUrl.startsWith('https://'));
+                
+                if (!pinataAlert) {
+                    log('No Pinata alerts found!', 'error');
+                    return;
+                }
+                
+                log(`Found Pinata alert: ${pinataAlert._id}`, 'success');
+                log(`Location: ${pinataAlert.location}`, 'info');
+                log(`Date: ${pinataAlert.anomalyDate}`, 'info');
+                log(`Time: ${pinataAlert.anomalyTime}`, 'info');
+                log(`Pinata URL: ${pinataAlert.pinataUrl}`, 'info');
+                
+                loadVideo(pinataAlert.pinataUrl);
+            } catch (error) {
+                log(`Error fetching alerts: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDirectPinataURL() {
+            clearLogs();
+            const url = 'https://gateway.pinata.cloud/ipfs/QmbhDq6UZu1rrnhLACf5g2a6t4aiMoWA7bg8qTcVA1USfT';
+            log(`Testing direct URL: ${url}`, 'info');
+            loadVideo(url);
+        }
+
+        function loadVideo(url) {
+            log(`Loading video from: ${url}`, 'info');
+            videoSource.src = url;
+            video.load();
+        }
+
+        // Setup video event listeners
+        video.addEventListener('loadstart', () => {
+            log('📥 Video loading started...', 'info');
+        });
+
+        video.addEventListener('progress', () => {
+            const buffered = video.buffered.length > 0 ? 
+                (video.buffered.end(0) / video.duration * 100).toFixed(1) + '%' : '0%';
+            log(`📥 Loading progress: ${buffered}`, 'info');
+        });
+
+        video.addEventListener('canplay', () => {
+            log('✅ Video can play!', 'success');
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            log(`✅ Video loaded! Duration: ${video.duration.toFixed(1)} seconds`, 'success');
+        });
+
+        video.addEventListener('error', (e) => {
+            const errorCodes = {
+                1: 'MEDIA_ERR_ABORTED - Loading aborted',
+                2: 'MEDIA_ERR_NETWORK - Network error',
+                3: 'MEDIA_ERR_DECODE - Decoding error',
+                4: 'MEDIA_ERR_SRC_NOT_SUPPORTED - Source not supported'
+            };
+            const code = video.error?.code || 'UNKNOWN';
+            const message = errorCodes[code] || 'Unknown error';
+            log(`❌ Video error: ${message} (Code: ${code})`, 'error');
+            log(`URL: ${videoSource.src}`, 'error');
+        });
+
+        video.addEventListener('playing', () => {
+            log('▶️ Video playing', 'success');
+        });
+
+        video.addEventListener('pause', () => {
+            log('⏸️ Video paused', 'info');
+        });
+
+        // Test on load
+        log('Page loaded. Click buttons to test video playback.', 'info');
+    </script>
+</body>
+</html>

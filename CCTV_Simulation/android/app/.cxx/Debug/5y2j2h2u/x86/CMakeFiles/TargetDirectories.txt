@@ -1,0 +1,2 @@
+C:/Users/pavan/StudioProjects/2025-CCTV-System-for-Women-s-Safety/CCTV_Simulation/android/app/.cxx/Debug/5y2j2h2u/x86/CMakeFiles/edit_cache.dir
+C:/Users/pavan/StudioProjects/2025-CCTV-System-for-Women-s-Safety/CCTV_Simulation/android/app/.cxx/Debug/5y2j2h2u/x86/CMakeFiles/rebuild_cache.dir

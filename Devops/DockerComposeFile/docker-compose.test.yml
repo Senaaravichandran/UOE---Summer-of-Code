@@ -1,0 +1,105 @@
+# EvaSafe Testing Docker Compose Configuration
+version: '3.8'
+
+services:
+  # Test Services
+  main-api-test:
+    container_name: evasafe-main-api-test
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5010:5000"
+    environment:
+      - NODE_ENV=test
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo-test:27017/evasafe_test
+      - REDIS_URL=redis://redis-test:6379
+    depends_on:
+      - mongo-test
+      - redis-test
+    networks:
+      - evasafe-test-network
+    command: npm test
+
+  crime-detection-test:
+    container_name: evasafe-crime-detection-test
+    build: 
+      context: ../../Crime_Detection
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5013:5003"
+    environment:
+      - PYTHONPATH=/app
+      - PORT=5003
+      - MONGO_URI=mongodb://mongo-test:27017/evasafe_test
+      - REDIS_URL=redis://redis-test:6379
+    depends_on:
+      - mongo-test
+      - redis-test
+    networks:
+      - evasafe-test-network
+    command: python -m pytest tests/ -v
+
+  web-frontend-test:
+    container_name: evasafe-web-frontend-test
+    build: 
+      context: ../../Web_Application/frontend
+      dockerfile: ../../Devops/Frontend-dockerFile/DevDockerfile
+    environment:
+      - NODE_ENV=test
+      - VITE_API_URL=http://main-api-test:5000
+    networks:
+      - evasafe-test-network
+    command: npm test
+
+  # Test Databases
+  mongo-test:
+    container_name: evasafe-mongo-test
+    image: mongo:6.0
+    ports:
+      - "27019:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=evasafe_test
+    networks:
+      - evasafe-test-network
+    tmpfs:
+      - /data/db
+
+  redis-test:
+    container_name: evasafe-redis-test
+    image: redis:7-alpine
+    ports:
+      - "6381:6379"
+    networks:
+      - evasafe-test-network
+    tmpfs:
+      - /data
+
+  # Test Runner
+  test-runner:
+    container_name: evasafe-test-runner
+    build: 
+      context: ../../
+      dockerfile: Devops/BackendDockerFile/BackendDockerfile
+    volumes:
+      - ../../:/app
+      - test-reports:/app/test-reports
+    environment:
+      - NODE_ENV=test
+      - API_URL=http://main-api-test:5000
+    depends_on:
+      - main-api-test
+      - crime-detection-test
+      - web-frontend-test
+    networks:
+      - evasafe-test-network
+    working_dir: /app/Devops/tests
+    command: npm test
+
+volumes:
+  test-reports:
+
+networks:
+  evasafe-test-network:
+    driver: bridge

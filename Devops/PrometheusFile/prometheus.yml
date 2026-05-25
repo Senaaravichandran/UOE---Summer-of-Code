@@ -1,0 +1,204 @@
+# EvaSafe Prometheus Configuration
+# Comprehensive monitoring setup for all services
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'evasafe-production'
+    environment: 'prod'
+
+rule_files:
+  - "alert_rules.yml"
+  - "recording_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Backend API Services
+  - job_name: 'main-api'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['backend:5000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'main-api'
+
+  - job_name: 'realtime-api'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['backend:5001']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'realtime-api'
+
+  - job_name: 'alert-engine'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['alert-engine:5002']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'alert-engine'
+
+  - job_name: 'crime-detection'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['crime-detection:5003']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'crime-detection'
+
+  # Frontend Services
+  - job_name: 'web-frontend'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['frontend:3000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'web-frontend'
+
+  - job_name: 'deploy-site'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['deploy:3001']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'deploy-site'
+
+  # Database Monitoring
+  - job_name: 'mongodb'
+    static_configs:
+      - targets: ['mongodb-exporter:9216']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'mongodb'
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'redis'
+
+  # Infrastructure Monitoring
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'node-exporter'
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'cadvisor'
+
+  # Live Feed Monitoring
+  - job_name: 'live-feed'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['live-feed:8080']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'live-feed'
+
+  # CCTV Guard System
+  - job_name: 'cctv-guard'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['cctv-guard:8000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'cctv-guard'
+
+  # Query System
+  - job_name: 'querying-system'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['querying-system:5000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'querying-system'
+
+  # Contract Services (Blockchain)
+  - job_name: 'contract-explorer'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['contract-explorer:3000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'contract-explorer'
+
+  # Nginx/Load Balancer
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'nginx'
+
+  # Jenkins CI/CD
+  - job_name: 'jenkins'
+    static_configs:
+      - targets: ['jenkins:8080']
+    metrics_path: '/prometheus'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'jenkins'
+
+  # SonarQube
+  - job_name: 'sonarqube'
+    static_configs:
+      - targets: ['sonarqube:9000']
+    metrics_path: '/api/monitoring/metrics'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        replacement: 'sonarqube'
+
+  # Blackbox Exporter for endpoint monitoring
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://evasafe.com/api/health
+        - https://evasafe.com/
+        - http://localhost:3000/
+        - http://localhost:5000/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

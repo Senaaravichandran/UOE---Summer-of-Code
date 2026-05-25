@@ -1,0 +1,25 @@
+﻿device_id,device_type,manufacturer,model,firmware_version,firmware_year,ip_environment,open_ports,protocols,authentication,default_credentials,encryption,rtsp_enabled,region,exposure_level
+1,Camera,Hikvision,DS-2CD2043G,5.4.0,2019,Lab,"80,554","HTTP,RTSP",no-auth,1,none,1,Asia,high
+2,DVR,Dahua,NVR4104HS,3.2.1,2020,Lab,"80,443","HTTP,HTTPS",auth,0,weak,1,Asia,medium
+3,Camera,Axis,M3045-V,10.12.0,2023,Private,443,HTTPS,auth,0,strong,0,Europe,low
+4,Camera,Hikvision,DS-2CD2143G,5.3.0,2018,Lab,"80,554","HTTP,RTSP",no-auth,1,none,1,Asia,high
+5,DVR,Dahua,DHI-XVR1B04,2.6.0,2017,Lab,80,HTTP,no-auth,1,none,0,Asia,high
+6,Camera,CP Plus,CP-VAC-D20L2,1.0.2,2018,Lab,80,HTTP,no-auth,1,none,0,Asia,high
+7,Camera,Hikvision,DS-2CD2085FWD,5.5.1,2020,Lab,"80,554","HTTP,RTSP",auth,0,weak,1,Asia,medium
+8,DVR,Dahua,NVR5208-8P,4.0.0,2021,Private,443,HTTPS,auth,0,weak,0,Asia,medium
+9,Camera,Axis,P3245-LVE,9.80.0,2022,Private,443,HTTPS,auth,0,strong,0,Europe,low
+10,Camera,CP Plus,CP-UNC-TA21L3,2.1.0,2020,Lab,"80,554","HTTP,RTSP",auth,0,weak,1,Asia,medium
+11,DVR,Hikvision,DS-7608NI-I2,3.4.0,2019,Lab,"80,554","HTTP,RTSP",no-auth,1,none,1,Asia,high
+12,Camera,Dahua,IPC-HFW1230S,2.4.1,2018,Lab,80,HTTP,no-auth,1,none,0,Asia,high
+13,Camera,Axis,M2026-LE,10.6.0,2023,Private,443,HTTPS,auth,0,strong,0,Europe,low
+14,DVR,CP Plus,CP-UVR-0401E1,1.5.0,2017,Lab,80,HTTP,no-auth,1,none,0,Asia,high
+15,Camera,Hikvision,DS-2CD1023G,5.2.0,2019,Lab,"80,554","HTTP,RTSP",auth,0,weak,1,Asia,medium
+16,Camera,Dahua,IPC-HDW1431S,2.8.0,2021,Private,443,HTTPS,auth,0,weak,0,Asia,medium
+17,DVR,Hikvision,DS-7104HGHI,3.0.0,2018,Lab,80,HTTP,no-auth,1,none,0,Asia,high
+18,Camera,CP Plus,CP-EAC-T24PL2,2.3.0,2022,Private,443,HTTPS,auth,0,strong,0,Asia,low
+20,DVR,Dahua,NVR4216-4KS2,4.2.1,2022,Private,443,HTTPS,auth,0,strong,0,Asia,low
+21,Camera,Hikvision,DS-2CD1623G,5.4.5,2020,Lab,"80,554","HTTP,RTSP",auth,0,weak,1,Asia,medium
+22,Camera,CP Plus,CP-UNC-DA41L3,1.9.0,2019,Lab,80,HTTP,no-auth,1,none,0,Asia,high
+23,DVR,Hikvision,DS-7616NI-Q2,4.1.0,2021,Private,443,HTTPS,auth,0,weak,0,Asia,medium
+24,Camera,Dahua,IPC-HFW2431T,3.0.0,2022,Private,443,HTTPS,auth,0,strong,0,Asia,low
+25,Camera,Axis,M3116-LVE,11.0.0,2024,Private,443,HTTPS,auth,0,strong,0,Europe,low

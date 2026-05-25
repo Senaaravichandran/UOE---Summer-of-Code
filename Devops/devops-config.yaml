@@ -1,0 +1,112 @@
+# EvaSafe DevOps Configuration
+# Comprehensive configuration for CI/CD pipeline and infrastructure
+
+project:
+  name: "EvaSafe"
+  version: "1.0.0"
+  description: "AI-Powered CCTV Security and Crime Detection System"
+  
+environments:
+  development:
+    url: "http://localhost:3000"
+    database_url: "mongodb://localhost:27017/evasafe_dev"
+    redis_url: "redis://localhost:6379"
+    
+  staging:
+    url: "https://staging.evasafe.com"
+    database_url: "${STAGING_DB_URL}"
+    redis_url: "${STAGING_REDIS_URL}"
+    
+  production:
+    url: "https://evasafe.com"
+    database_url: "${PROD_DB_URL}"
+    redis_url: "${PROD_REDIS_URL}"
+
+services:
+  backend:
+    - name: "main-api"
+      port: 5000
+      path: "./backend"
+      dockerfile: "./Devops/BackendDockerFile/Dockerfile"
+      health_check: "/api/health"
+      
+    - name: "realtime-api"
+      port: 5001
+      path: "./backend"
+      dockerfile: "./Devops/BackendDockerFile/Dockerfile"
+      health_check: "/api/realtime/health"
+      
+    - name: "alert-engine"
+      port: 5002
+      path: "./backend/alert_engine"
+      dockerfile: "./Devops/BackendDockerFile/Dockerfile"
+      
+    - name: "crime-detection"
+      port: 5003
+      path: "./Crime_Detection"
+      dockerfile: "./Devops/BackendDockerFile/Dockerfile"
+      
+  frontend:
+    - name: "web-app"
+      port: 3000
+      path: "./frontend"
+      dockerfile: "./Devops/Frontend-dockerFile/Dockerfile"
+      
+    - name: "deploy-site"
+      port: 3001
+      path: "./Deploy"
+      dockerfile: "./Devops/Frontend-dockerFile/Dockerfile"
+
+  mobile:
+    - name: "cctv-police-app"
+      path: "./CCTV_Police"
+      platform: "flutter"
+      
+    - name: "cctv-simulation"
+      path: "./CCTV_Simulation"
+      platform: "flutter"
+
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+    scrape_interval: "15s"
+    
+  grafana:
+    enabled: true
+    port: 3000
+    
+  sonarqube:
+    enabled: true
+    port: 9000
+
+ci_cd:
+  triggers:
+    - push_to_main
+    - pull_request
+    - tag_creation
+    
+  stages:
+    - lint
+    - test
+    - security_scan
+    - build
+    - deploy_staging
+    - integration_tests
+    - deploy_production
+    
+  notifications:
+    slack_webhook: "${SLACK_WEBHOOK_URL}"
+    email: "devops@evasafe.com"
+
+security:
+  container_scanning: true
+  dependency_scanning: true
+  sast_scanning: true
+  dast_scanning: true
+  
+quality_gates:
+  code_coverage: 80
+  security_hotspots: 0
+  bugs: 0
+  vulnerabilities: 0

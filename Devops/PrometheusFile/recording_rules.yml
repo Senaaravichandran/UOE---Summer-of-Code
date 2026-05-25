@@ -1,0 +1,134 @@
+# EvaSafe Recording Rules for Prometheus
+groups:
+  - name: evasafe.recording_rules
+    interval: 30s
+    rules:
+      # Request Rate Rules
+      - record: evasafe:http_requests_per_second
+        expr: rate(http_requests_total[5m])
+
+      - record: evasafe:http_requests_per_second_by_service
+        expr: sum(rate(http_requests_total[5m])) by (service)
+
+      - record: evasafe:http_error_rate
+        expr: rate(http_requests_total{status=~"4..|5.."}[5m]) / rate(http_requests_total[5m])
+
+      # Response Time Rules
+      - record: evasafe:http_response_time_p95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: evasafe:http_response_time_p99
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: evasafe:http_response_time_avg
+        expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
+
+      # Crime Detection Performance
+      - record: evasafe:crime_detection_processing_rate
+        expr: rate(crime_detection_processed_total[5m])
+
+      - record: evasafe:crime_detection_success_rate
+        expr: rate(crime_detection_successful_total[5m]) / rate(crime_detection_processed_total[5m])
+
+      - record: evasafe:crime_detection_avg_processing_time
+        expr: rate(crime_detection_processing_seconds_sum[5m]) / rate(crime_detection_processing_seconds_count[5m])
+
+      # Alert System Performance
+      - record: evasafe:alerts_generated_per_minute
+        expr: rate(alerts_generated_total[1m]) * 60
+
+      - record: evasafe:alert_delivery_success_rate
+        expr: rate(alert_delivery_successful_total[5m]) / rate(alert_delivery_attempts_total[5m])
+
+      - record: evasafe:alert_response_time_avg
+        expr: rate(alert_response_time_seconds_sum[5m]) / rate(alert_response_time_seconds_count[5m])
+
+      # Live Feed Performance
+      - record: evasafe:live_feed_fps_avg
+        expr: avg(live_feed_frames_per_second) by (camera_id)
+
+      - record: evasafe:live_feed_latency_avg
+        expr: avg(live_feed_latency_seconds) by (camera_id)
+
+      - record: evasafe:active_camera_feeds
+        expr: sum(live_feed_active_status) by (location)
+
+      # System Resource Utilization
+      - record: evasafe:cpu_usage_percent
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      - record: evasafe:memory_usage_percent
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+
+      - record: evasafe:disk_usage_percent
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100
+
+      # Database Performance
+      - record: evasafe:database_query_rate
+        expr: rate(database_queries_total[5m])
+
+      - record: evasafe:database_query_duration_avg
+        expr: rate(database_query_duration_seconds_sum[5m]) / rate(database_query_duration_seconds_count[5m])
+
+      - record: evasafe:database_connection_pool_usage
+        expr: database_connections_active / database_connections_max
+
+      # Container Performance
+      - record: evasafe:container_cpu_usage_percent
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100
+
+      - record: evasafe:container_memory_usage_percent
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100
+
+      - record: evasafe:container_restart_rate
+        expr: increase(container_restart_count[1h])
+
+      # Security Metrics
+      - record: evasafe:unauthorized_attempts_per_minute
+        expr: rate(unauthorized_access_attempts_total[1m]) * 60
+
+      - record: evasafe:security_incidents_per_hour
+        expr: rate(security_incidents_total[1h]) * 3600
+
+      # API Endpoint Performance
+      - record: evasafe:api_endpoint_success_rate
+        expr: |
+          sum(rate(http_requests_total{status!~"4..|5.."}[5m])) by (endpoint)
+          /
+          sum(rate(http_requests_total[5m])) by (endpoint)
+
+      - record: evasafe:api_endpoint_p95_latency
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (endpoint, le)
+          )
+
+      # Business Metrics
+      - record: evasafe:incidents_detected_per_hour
+        expr: rate(incidents_detected_total[1h]) * 3600
+
+      - record: evasafe:false_positive_rate
+        expr: rate(false_positive_incidents_total[5m]) / rate(incidents_detected_total[5m])
+
+      - record: evasafe:evidence_uploads_per_hour
+        expr: rate(evidence_uploads_total[1h]) * 3600
+
+      # Network Performance
+      - record: evasafe:network_bytes_received_rate
+        expr: rate(node_network_receive_bytes_total[5m])
+
+      - record: evasafe:network_bytes_transmitted_rate
+        expr: rate(node_network_transmit_bytes_total[5m])
+
+      - record: evasafe:network_packet_loss_rate
+        expr: rate(node_network_receive_drop_total[5m]) / rate(node_network_receive_packets_total[5m])
+
+      # Video Processing Metrics
+      - record: evasafe:video_processing_throughput
+        expr: rate(video_frames_processed_total[5m])
+
+      - record: evasafe:video_quality_score_avg
+        expr: avg(video_quality_score) by (camera_id)
+
+      - record: evasafe:video_storage_usage_gb
+        expr: sum(video_storage_bytes) / (1024^3)

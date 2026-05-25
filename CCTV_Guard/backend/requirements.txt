@@ -1,0 +1,11 @@
+flask
+flask-cors
+flask-sock
+pandas
+requests
+scikit-learn
+joblib
+numpy
+shodan
+simple-websocket
+psutil

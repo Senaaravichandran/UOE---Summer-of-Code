@@ -1,0 +1,327 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_HUB_REPO = 'evasafe'
+        SONAR_TOKEN = credentials('sonar-token')
+        SLACK_WEBHOOK = credentials('slack-webhook')
+        NODE_VERSION = '18'
+        PYTHON_VERSION = '3.9'
+        FLUTTER_VERSION = '3.16.0'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                script {
+                    env.BUILD_NUMBER = env.BUILD_NUMBER
+                    env.GIT_COMMIT = sh(
+                        script: 'git rev-parse HEAD',
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        
+        stage('Setup Environment') {
+            parallel {
+                stage('Node.js Setup') {
+                    steps {
+                        sh """
+                            nvm use ${NODE_VERSION}
+                            cd frontend && npm install
+                            cd ../Deploy && npm install
+                            cd ../backend && npm install
+                            cd ../Contract_Explorer && npm install
+                            cd ../Contract_Deployment && npm install
+                        """
+                    }
+                }
+                
+                stage('Python Setup') {
+                    steps {
+                        sh """
+                            python${PYTHON_VERSION} -m pip install --upgrade pip
+                            cd Crime_Detection && pip install -r requirements.txt
+                            cd ../backend && pip install -r requirements.txt
+                            cd ../CCTV_Guard && pip install -r requirements.txt
+                            cd ../Live_Feed && pip install -r requirements.txt
+                            cd ../CCTV_Querying_System && pip install -r requirements.txt
+                        """
+                    }
+                }
+                
+                stage('Flutter Setup') {
+                    steps {
+                        sh """
+                            flutter --version
+                            cd CCTV_Police && flutter pub get
+                            cd ../CCTV_Simulation && flutter pub get
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Code Quality & Security') {
+            parallel {
+                stage('Lint Check') {
+                    steps {
+                        sh """
+                            # JavaScript/TypeScript linting
+                            cd frontend && npm run lint
+                            cd ../backend && npm run lint
+                            
+                            # Python linting
+                            cd ../Crime_Detection && flake8 . --max-line-length=88
+                            cd ../backend && flake8 . --max-line-length=88
+                            
+                            # Flutter linting
+                            cd ../CCTV_Police && flutter analyze
+                            cd ../CCTV_Simulation && flutter analyze
+                        """
+                    }
+                }
+                
+                stage('Security Scan') {
+                    steps {
+                        sh """
+                            # Dependency check
+                            dependency-check.sh --project EvaSafe --scan . --format XML
+                            
+                            # Container security scan
+                            trivy fs --exit-code 0 --severity HIGH,CRITICAL .
+                            
+                            # Secret detection
+                            gitleaks detect --source . --verbose
+                        """
+                    }
+                }
+                
+                stage('SonarQube Analysis') {
+                    steps {
+                        withSonarQubeEnv('SonarQube') {
+                            sh """
+                                sonar-scanner \\
+                                  -Dsonar.projectKey=evasafe \\
+                                  -Dsonar.sources=. \\
+                                  -Dsonar.host.url=http://localhost:9000 \\
+                                  -Dsonar.login=${SONAR_TOKEN}
+                            """
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Testing') {
+            parallel {
+                stage('Backend Tests') {
+                    steps {
+                        sh """
+                            # Node.js tests
+                            cd backend && npm test
+                            
+                            # Python tests
+                            cd ../Crime_Detection && python -m pytest tests/ --cov=. --cov-report=xml
+                            cd ../CCTV_Guard && python -m pytest . --cov=. --cov-report=xml
+                        """
+                    }
+                }
+                
+                stage('Frontend Tests') {
+                    steps {
+                        sh """
+                            cd frontend && npm test -- --coverage --watchAll=false
+                            cd ../Deploy && npm test -- --coverage --watchAll=false
+                        """
+                    }
+                }
+                
+                stage('Mobile Tests') {
+                    steps {
+                        sh """
+                            cd CCTV_Police && flutter test --coverage
+                            cd ../CCTV_Simulation && flutter test --coverage
+                        """
+                    }
+                }
+                
+                stage('Integration Tests') {
+                    steps {
+                        sh """
+                            # Start services for integration testing
+                            docker-compose -f Devops/DockerComposeFile/docker-compose.test.yml up -d
+                            
+                            # Wait for services to be ready
+                            sleep 30
+                            
+                            # Run integration tests
+                            cd Devops/tests && npm test
+                            
+                            # Cleanup
+                            docker-compose -f Devops/DockerComposeFile/docker-compose.test.yml down
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Build Images') {
+            parallel {
+                stage('Backend Images') {
+                    steps {
+                        script {
+                            def services = ['main-api', 'crime-detection', 'alert-engine']
+                            services.each { service ->
+                                sh """
+                                    docker build -f Devops/BackendDockerFile/Dockerfile \\
+                                      -t ${DOCKER_HUB_REPO}/${service}:${BUILD_NUMBER} \\
+                                      -t ${DOCKER_HUB_REPO}/${service}:latest .
+                                """
+                            }
+                        }
+                    }
+                }
+                
+                stage('Frontend Images') {
+                    steps {
+                        sh """
+                            docker build -f Devops/Frontend-dockerFile/Dockerfile \\
+                              -t ${DOCKER_HUB_REPO}/frontend:${BUILD_NUMBER} \\
+                              -t ${DOCKER_HUB_REPO}/frontend:latest ./frontend
+                              
+                            docker build -f Devops/Frontend-dockerFile/Dockerfile \\
+                              -t ${DOCKER_HUB_REPO}/deploy-site:${BUILD_NUMBER} \\
+                              -t ${DOCKER_HUB_REPO}/deploy-site:latest ./Deploy
+                        """
+                    }
+                }
+                
+                stage('Mobile Apps') {
+                    steps {
+                        sh """
+                            # Build Flutter apps
+                            cd CCTV_Police
+                            flutter build apk --release
+                            flutter build web --release
+                            
+                            cd ../CCTV_Simulation
+                            flutter build apk --release
+                            flutter build web --release
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                script {
+                    timeout(time: 5, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to Staging') {
+            when {
+                anyOf {
+                    branch 'develop'
+                    branch 'staging'
+                }
+            }
+            steps {
+                sh """
+                    # Deploy to staging environment
+                    docker-compose -f Devops/DockerComposeFile/docker-compose.staging.yml down
+                    docker-compose -f Devops/DockerComposeFile/docker-compose.staging.yml up -d
+                    
+                    # Health checks
+                    sleep 30
+                    curl -f http://staging.evasafe.com/api/health || exit 1
+                """
+            }
+        }
+        
+        stage('Deploy to Production') {
+            when {
+                branch 'main'
+            }
+            input {
+                message "Deploy to production?"
+                ok "Deploy"
+                submitter "admin"
+            }
+            steps {
+                sh """
+                    # Push images to registry
+                    docker push ${DOCKER_HUB_REPO}/main-api:${BUILD_NUMBER}
+                    docker push ${DOCKER_HUB_REPO}/crime-detection:${BUILD_NUMBER}
+                    docker push ${DOCKER_HUB_REPO}/alert-engine:${BUILD_NUMBER}
+                    docker push ${DOCKER_HUB_REPO}/frontend:${BUILD_NUMBER}
+                    
+                    # Deploy to production
+                    docker-compose -f Devops/DockerComposeFile/docker-compose.prod.yml down
+                    docker-compose -f Devops/DockerComposeFile/docker-compose.prod.yml up -d
+                    
+                    # Health checks
+                    sleep 60
+                    curl -f https://evasafe.com/api/health || exit 1
+                """
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Cleanup
+            sh 'docker system prune -f'
+            
+            // Archive artifacts
+            archiveArtifacts artifacts: '**/*.apk,**/*.aab,**/coverage/**', allowEmptyArchive: true
+            
+            // Test reports
+            publishTestResults testResultsPattern: '**/test-results.xml'
+            publishCoverageResults(
+                adapters: [
+                    coberturaAdapter('**/coverage.xml'),
+                    istanbulCoberturaAdapter('**/coverage/cobertura-coverage.xml')
+                ],
+                sourceFileResolver: sourceFiles('STORE_LAST_BUILD')
+            )
+        }
+        
+        success {
+            slackSend(
+                channel: '#devops',
+                color: 'good',
+                message: ":white_check_mark: Build ${BUILD_NUMBER} succeeded for ${env.BRANCH_NAME}"
+            )
+        }
+        
+        failure {
+            slackSend(
+                channel: '#devops',
+                color: 'danger',
+                message: ":x: Build ${BUILD_NUMBER} failed for ${env.BRANCH_NAME}"
+            )
+            
+            emailext(
+                subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                body: "Build failed. Check console output at ${env.BUILD_URL}",
+                to: "devops@evasafe.com"
+            )
+        }
+        
+        unstable {
+            slackSend(
+                channel: '#devops',
+                color: 'warning',
+                message: ":warning: Build ${BUILD_NUMBER} is unstable for ${env.BRANCH_NAME}"
+            )
+        }
+    }
+}

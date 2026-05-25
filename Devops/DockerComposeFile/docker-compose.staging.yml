@@ -1,0 +1,154 @@
+# EvaSafe Staging Docker Compose Configuration
+version: '3.8'
+
+services:
+  # Backend Services
+  main-api-staging:
+    container_name: evasafe-main-api-staging
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=staging
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo-staging:27017/evasafe_staging
+      - REDIS_URL=redis://redis-staging:6379
+      - JWT_SECRET=${JWT_SECRET_STAGING}
+    depends_on:
+      - mongo-staging
+      - redis-staging
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  realtime-api-staging:
+    container_name: evasafe-realtime-api-staging
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=staging
+      - PORT=5001
+      - MONGO_URI=mongodb://mongo-staging:27017/evasafe_staging
+      - REDIS_URL=redis://redis-staging:6379
+    depends_on:
+      - mongo-staging
+      - redis-staging
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+
+  crime-detection-staging:
+    container_name: evasafe-crime-detection-staging
+    build: 
+      context: ../../Crime_Detection
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - PYTHONPATH=/app
+      - PORT=5003
+      - MONGO_URI=mongodb://mongo-staging:27017/evasafe_staging
+      - REDIS_URL=redis://redis-staging:6379
+    depends_on:
+      - mongo-staging
+      - redis-staging
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  alert-engine-staging:
+    container_name: evasafe-alert-engine-staging
+    build: 
+      context: ../../backend/alert_engine
+      dockerfile: ../../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - MONGO_URI=mongodb://mongo-staging:27017/evasafe_staging
+      - REDIS_URL=redis://redis-staging:6379
+    depends_on:
+      - mongo-staging
+      - redis-staging
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+
+  # Frontend Services
+  web-frontend-staging:
+    container_name: evasafe-web-frontend-staging
+    build: 
+      context: ../../Web_Application/frontend
+      dockerfile: ../../Devops/Frontend-dockerFile/FrontendDockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=staging
+      - VITE_API_URL=http://main-api-staging:5000
+    depends_on:
+      - main-api-staging
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+
+  # Database Services
+  mongo-staging:
+    container_name: evasafe-mongo-staging
+    image: mongo:6.0
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=evasafe_staging
+    volumes:
+      - mongo-staging-data:/data/db
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+
+  redis-staging:
+    container_name: evasafe-redis-staging
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-staging-data:/data
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+
+  # Monitoring for Staging
+  prometheus-staging:
+    container_name: evasafe-prometheus-staging
+    image: prom/prometheus:latest
+    ports:
+      - "9091:9090"
+    volumes:
+      - ../PrometheusFile/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-staging-data:/prometheus
+    networks:
+      - evasafe-staging-network
+    restart: unless-stopped
+
+volumes:
+  mongo-staging-data:
+  redis-staging-data:
+  prometheus-staging-data:
+
+networks:
+  evasafe-staging-network:
+    driver: bridge

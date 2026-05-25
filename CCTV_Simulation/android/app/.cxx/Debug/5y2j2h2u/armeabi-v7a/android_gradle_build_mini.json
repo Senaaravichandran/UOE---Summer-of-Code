@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "C:\\Users\\pavan\\Software SDK\u0027s\\flutter_sdk\\flutter\\packages\\flutter_tools\\gradle\\src\\main\\groovy\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\pavan\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\pavan\\StudioProjects\\2025-CCTV-System-for-Women-s-Safety\\CCTV_Simulation\\android\\app\\.cxx\\Debug\\5y2j2h2u\\armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\pavan\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\pavan\\StudioProjects\\2025-CCTV-System-for-Women-s-Safety\\CCTV_Simulation\\android\\app\\.cxx\\Debug\\5y2j2h2u\\armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

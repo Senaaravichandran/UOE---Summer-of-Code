@@ -1,0 +1,43 @@
+device_id,manufacturer,model,vulnerability,severity,cve_id,cve_severity,cve_description
+24,Dahua,IPC-HFW2431T,,Low,None,None,No known CVE mapping
+8,Dahua,NVR5208-8P,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+14,CP Plus,CP-UVR-0401E1,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+14,CP Plus,CP-UVR-0401E1,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+14,CP Plus,CP-UVR-0401E1,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+12,Dahua,IPC-HFW1230S,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+12,Dahua,IPC-HFW1230S,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+12,Dahua,IPC-HFW1230S,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+6,CP Plus,CP-VAC-D20L2,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+6,CP Plus,CP-VAC-D20L2,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+6,CP Plus,CP-VAC-D20L2,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+18,CP Plus,CP-EAC-T24PL2,,Low,None,None,No known CVE mapping
+11,Hikvision,DS-7608NI-I2,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+11,Hikvision,DS-7608NI-I2,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+11,Hikvision,DS-7608NI-I2,Exposed RTSP Stream,High,CVE-2018-9995,High,Unauthenticated access to RTSP video stream
+11,Hikvision,DS-7608NI-I2,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+3,Axis,M3045-V,,Low,None,None,No known CVE mapping
+22,CP Plus,CP-UNC-DA41L3,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+22,CP Plus,CP-UNC-DA41L3,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+22,CP Plus,CP-UNC-DA41L3,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+13,Axis,M2026-LE,,Low,None,None,No known CVE mapping
+9,Axis,P3245-LVE,,Low,None,None,No known CVE mapping
+1,Hikvision,DS-2CD2043G,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+1,Hikvision,DS-2CD2043G,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+1,Hikvision,DS-2CD2043G,Exposed RTSP Stream,High,CVE-2018-9995,High,Unauthenticated access to RTSP video stream
+1,Hikvision,DS-2CD2043G,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+16,Dahua,IPC-HDW1431S,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+15,Hikvision,DS-2CD1023G,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+15,Hikvision,DS-2CD1023G,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+25,Axis,M3116-LVE,,Low,None,None,No known CVE mapping
+23,Hikvision,DS-7616NI-Q2,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+5,Dahua,DHI-XVR1B04,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+5,Dahua,DHI-XVR1B04,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+5,Dahua,DHI-XVR1B04,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data
+10,CP Plus,CP-UNC-TA21L3,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+21,Hikvision,DS-2CD1623G,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+7,Hikvision,DS-2CD2085FWD,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+2,Dahua,NVR4104HS,Weak Encryption,Medium,CVE-2020-25078,Medium,Use of weak or deprecated encryption algorithms
+4,Hikvision,DS-2CD2143G,Default Credentials,High,CVE-2017-7921,High,Authentication bypass using default credentials
+4,Hikvision,DS-2CD2143G,Outdated Firmware,Medium,CVE-2021-36260,Critical,Remote command execution via improper input validation
+4,Hikvision,DS-2CD2143G,Exposed RTSP Stream,High,CVE-2018-9995,High,Unauthenticated access to RTSP video stream
+4,Hikvision,DS-2CD2143G,No Encryption,High,CVE-2019-12255,Medium,Cleartext transmission of sensitive video data

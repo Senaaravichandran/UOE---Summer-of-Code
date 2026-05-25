@@ -1,0 +1,40 @@
+device_id,manufacturer,model,vulnerability,cve_id,attack_name,attack_steps,impact,likelihood
+5,Dahua,DHI-XVR1B04,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+14,CP Plus,CP-UVR-0401E1,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+14,CP Plus,CP-UVR-0401E1,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+14,CP Plus,CP-UVR-0401E1,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+8,Dahua,NVR5208-8P,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+1,Hikvision,DS-2CD2043G,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+4,Hikvision,DS-2CD2143G,Exposed RTSP Stream,CVE-2018-9995,Unauthorized Video Access,Scan for RTSP port (554) -> Access RTSP stream without authentication -> View or record live video feed,Privacy breach,High
+18,CP Plus,CP-EAC-T24PL2,,,No Exploitable Attack,No attack path identified,None,Low
+5,Dahua,DHI-XVR1B04,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+12,Dahua,IPC-HFW1230S,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+13,Axis,M2026-LE,,,No Exploitable Attack,No attack path identified,None,Low
+1,Hikvision,DS-2CD2043G,Exposed RTSP Stream,CVE-2018-9995,Unauthorized Video Access,Scan for RTSP port (554) -> Access RTSP stream without authentication -> View or record live video feed,Privacy breach,High
+22,CP Plus,CP-UNC-DA41L3,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+5,Dahua,DHI-XVR1B04,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+21,Hikvision,DS-2CD1623G,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+23,Hikvision,DS-7616NI-Q2,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+15,Hikvision,DS-2CD1023G,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+4,Hikvision,DS-2CD2143G,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+24,Dahua,IPC-HFW2431T,,,No Exploitable Attack,No attack path identified,None,Low
+2,Dahua,NVR4104HS,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+22,CP Plus,CP-UNC-DA41L3,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+6,CP Plus,CP-VAC-D20L2,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+1,Hikvision,DS-2CD2043G,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+16,Dahua,IPC-HDW1431S,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+25,Axis,M3116-LVE,,,No Exploitable Attack,No attack path identified,None,Low
+11,Hikvision,DS-7608NI-I2,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+12,Dahua,IPC-HFW1230S,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+11,Hikvision,DS-7608NI-I2,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+10,CP Plus,CP-UNC-TA21L3,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+4,Hikvision,DS-2CD2143G,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+6,CP Plus,CP-VAC-D20L2,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High
+3,Axis,M3045-V,,,No Exploitable Attack,No attack path identified,None,Low
+4,Hikvision,DS-2CD2143G,No Encryption,CVE-2019-12255,Man-in-the-Middle Attack,Position attacker on network -> Intercept unencrypted traffic -> Extract credentials or video data,Data leakage,High
+12,Dahua,IPC-HFW1230S,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+11,Hikvision,DS-7608NI-I2,Exposed RTSP Stream,CVE-2018-9995,Unauthorized Video Access,Scan for RTSP port (554) -> Access RTSP stream without authentication -> View or record live video feed,Privacy breach,High
+15,Hikvision,DS-2CD1023G,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+7,Hikvision,DS-2CD2085FWD,Weak Encryption,CVE-2020-25078,Cryptographic Downgrade Attack,Detect weak encryption algorithm -> Force downgrade or exploit weakness -> Decrypt sensitive communication,Confidentiality compromise,Medium
+6,CP Plus,CP-VAC-D20L2,Outdated Firmware,CVE-2021-36260,Firmware Exploitation (Simulated RCE),Fingerprint firmware version -> Identify known vulnerability -> Send crafted request (simulated) -> Execute arbitrary command,Remote code execution,Medium
+22,CP Plus,CP-UNC-DA41L3,Default Credentials,CVE-2017-7921,Credential Abuse,Identify login interface -> Attempt default username/password -> Gain administrative access,Full device takeover,High

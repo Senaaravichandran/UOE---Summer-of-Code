@@ -1,0 +1,165 @@
+# EvaSafe Development Docker Compose Configuration
+version: '3.8'
+
+services:
+  # Backend Services (Development Mode)
+  main-api-dev:
+    container_name: evasafe-main-api-dev
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo-dev:27017/evasafe_dev
+      - REDIS_URL=redis://redis-dev:6379
+      - DEBUG=true
+    depends_on:
+      - mongo-dev
+      - redis-dev
+    networks:
+      - evasafe-dev-network
+    volumes:
+      - ../../backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  realtime-api-dev:
+    container_name: evasafe-realtime-api-dev
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=development
+      - PORT=5001
+      - MONGO_URI=mongodb://mongo-dev:27017/evasafe_dev
+      - REDIS_URL=redis://redis-dev:6379
+    depends_on:
+      - mongo-dev
+      - redis-dev
+    networks:
+      - evasafe-dev-network
+    volumes:
+      - ../../backend:/app
+      - /app/node_modules
+
+  crime-detection-dev:
+    container_name: evasafe-crime-detection-dev
+    build: 
+      context: ../../Crime_Detection
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - PYTHONPATH=/app
+      - PORT=5003
+      - MONGO_URI=mongodb://mongo-dev:27017/evasafe_dev
+      - REDIS_URL=redis://redis-dev:6379
+      - DEBUG=True
+    depends_on:
+      - mongo-dev
+      - redis-dev
+    networks:
+      - evasafe-dev-network
+    volumes:
+      - ../../Crime_Detection:/app
+    command: python app.py
+
+  # Frontend Services (Development Mode)
+  web-frontend-dev:
+    container_name: evasafe-web-frontend-dev
+    build: 
+      context: ../../Web_Application/frontend
+      dockerfile: ../../Devops/Frontend-dockerFile/DevDockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000
+      - VITE_WS_URL=ws://localhost:5001
+    depends_on:
+      - main-api-dev
+    networks:
+      - evasafe-dev-network
+    volumes:
+      - ../../Web_Application/frontend:/app
+      - /app/node_modules
+
+  deploy-site-dev:
+    container_name: evasafe-deploy-site-dev
+    build: 
+      context: ../../Deploy
+      dockerfile: ../Devops/Frontend-dockerFile/DevDockerfile
+    ports:
+      - "3001:3000"
+    networks:
+      - evasafe-dev-network
+    volumes:
+      - ../../Deploy:/app
+      - /app/node_modules
+
+  # Database Services (Development)
+  mongo-dev:
+    container_name: evasafe-mongo-dev
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=evasafe_dev
+    volumes:
+      - mongo-dev-data:/data/db
+    networks:
+      - evasafe-dev-network
+    restart: unless-stopped
+
+  redis-dev:
+    container_name: evasafe-redis-dev
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-dev-data:/data
+    networks:
+      - evasafe-dev-network
+    restart: unless-stopped
+
+  # Development Tools
+  mongo-express:
+    container_name: evasafe-mongo-express
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo-dev
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=password
+    depends_on:
+      - mongo-dev
+    networks:
+      - evasafe-dev-network
+
+  redis-commander:
+    container_name: evasafe-redis-commander
+    image: rediscommander/redis-commander
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:redis-dev:6379
+    depends_on:
+      - redis-dev
+    networks:
+      - evasafe-dev-network
+
+volumes:
+  mongo-dev-data:
+  redis-dev-data:
+
+networks:
+  evasafe-dev-network:
+    driver: bridge

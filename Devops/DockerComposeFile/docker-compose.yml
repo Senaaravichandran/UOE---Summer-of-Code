@@ -1,0 +1,314 @@
+# EvaSafe Production Docker Compose Configuration
+version: '3.8'
+
+services:
+  # Backend Services
+  main-api:
+    container_name: evasafe-main-api
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - API_KEY=${API_KEY}
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+    volumes:
+      - ./logs/main-api:/app/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  realtime-api:
+    container_name: evasafe-realtime-api
+    build: 
+      context: ../../backend
+      dockerfile: ../Devops/BackendDockerFile/BackendDockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+    volumes:
+      - ./logs/realtime-api:/app/logs
+
+  crime-detection:
+    container_name: evasafe-crime-detection
+    build: 
+      context: ../../Crime_Detection
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - PYTHONPATH=/app
+      - PORT=5003
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+      - MODEL_PATH=/app/models
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+    volumes:
+      - ./logs/crime-detection:/app/logs
+      - crime-models:/app/models
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+
+  alert-engine:
+    container_name: evasafe-alert-engine
+    build: 
+      context: ../../backend/alert_engine
+      dockerfile: ../../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  live-feed:
+    container_name: evasafe-live-feed
+    build: 
+      context: ../../Live_Feed
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+    volumes:
+      - live-feed-uploads:/app/uploads
+      - live-feed-captures:/app/captures
+
+  cctv-guard:
+    container_name: evasafe-cctv-guard
+    build: 
+      context: ../../CCTV_Guard
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  querying-system:
+    container_name: evasafe-querying-system
+    build: 
+      context: ../../CCTV_Querying_System
+      dockerfile: ../Devops/BackendDockerFile/PythonDockerfile
+    ports:
+      - "5004:5004"
+    environment:
+      - PORT=5004
+      - MONGO_URI=mongodb://mongo:27017/evasafe_prod
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+    volumes:
+      - query-data:/app/data
+      - chroma-db:/app/chroma_db
+
+  # Frontend Services
+  web-frontend:
+    container_name: evasafe-web-frontend
+    build: 
+      context: ../../Web_Application/frontend
+      dockerfile: ../../Devops/Frontend-dockerFile/FrontendDockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://main-api:5000
+      - VITE_WS_URL=ws://realtime-api:5001
+    depends_on:
+      - main-api
+      - realtime-api
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  deploy-site:
+    container_name: evasafe-deploy-site
+    build: 
+      context: ../../Deploy
+      dockerfile: ../Devops/Frontend-dockerFile/FrontendDockerfile
+    ports:
+      - "3001:80"
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  # Database Services
+  mongo:
+    container_name: evasafe-mongo
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=evasafe_prod
+    volumes:
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+      - ./mongodb-init:/docker-entrypoint-initdb.d
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+    command: mongod --auth
+
+  redis:
+    container_name: evasafe-redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  # Monitoring Services
+  prometheus:
+    container_name: evasafe-prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../PrometheusFile/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../PrometheusFile/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - ../PrometheusFile/recording_rules.yml:/etc/prometheus/recording_rules.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  grafana:
+    container_name: evasafe-grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3030:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  alertmanager:
+    container_name: evasafe-alertmanager
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ../PrometheusFile/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager-data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+  # Load Balancer
+  nginx:
+    container_name: evasafe-nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - web-frontend
+      - main-api
+    networks:
+      - evasafe-network
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+  mongo-config:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+  alertmanager-data:
+  crime-models:
+  live-feed-uploads:
+  live-feed-captures:
+  query-data:
+  chroma-db:
+
+networks:
+  evasafe-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

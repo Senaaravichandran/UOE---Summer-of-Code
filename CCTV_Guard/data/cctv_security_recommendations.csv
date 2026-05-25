@@ -1,0 +1,40 @@
+device_id,manufacturer,model,vulnerability,ml_risk_level,priority,recommended_actions
+5,Dahua,DHI-XVR1B04,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+14,CP Plus,CP-UVR-0401E1,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+14,CP Plus,CP-UVR-0401E1,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+14,CP Plus,CP-UVR-0401E1,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+8,Dahua,NVR5208-8P,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+1,Hikvision,DS-2CD2043G,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+4,Hikvision,DS-2CD2143G,Exposed RTSP Stream,High,Critical,Enable authentication for RTSP streams | Restrict RTSP access to trusted IPs | Disable RTSP if not required
+18,CP Plus,CP-EAC-T24PL2,,Low,Moderate,No immediate action required | Continue regular security monitoring
+5,Dahua,DHI-XVR1B04,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+12,Dahua,IPC-HFW1230S,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+13,Axis,M2026-LE,,Low,Moderate,No immediate action required | Continue regular security monitoring
+1,Hikvision,DS-2CD2043G,Exposed RTSP Stream,High,Critical,Enable authentication for RTSP streams | Restrict RTSP access to trusted IPs | Disable RTSP if not required
+22,CP Plus,CP-UNC-DA41L3,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+5,Dahua,DHI-XVR1B04,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+21,Hikvision,DS-2CD1623G,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+23,Hikvision,DS-7616NI-Q2,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+15,Hikvision,DS-2CD1023G,Outdated Firmware,Medium,High,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+4,Hikvision,DS-2CD2143G,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+24,Dahua,IPC-HFW2431T,,Low,Moderate,No immediate action required | Continue regular security monitoring
+2,Dahua,NVR4104HS,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+22,CP Plus,CP-UNC-DA41L3,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+6,CP Plus,CP-VAC-D20L2,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+1,Hikvision,DS-2CD2043G,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+16,Dahua,IPC-HDW1431S,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+25,Axis,M3116-LVE,,Low,Moderate,No immediate action required | Continue regular security monitoring
+11,Hikvision,DS-7608NI-I2,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+12,Dahua,IPC-HFW1230S,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+11,Hikvision,DS-7608NI-I2,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+10,CP Plus,CP-UNC-TA21L3,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+4,Hikvision,DS-2CD2143G,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+6,CP Plus,CP-VAC-D20L2,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access
+3,Axis,M3045-V,,Low,Moderate,No immediate action required | Continue regular security monitoring
+4,Hikvision,DS-2CD2143G,No Encryption,High,Critical,Enable HTTPS/TLS communication | Disable plaintext protocols | Use secure key management
+12,Dahua,IPC-HFW1230S,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+11,Hikvision,DS-7608NI-I2,Exposed RTSP Stream,High,Critical,Enable authentication for RTSP streams | Restrict RTSP access to trusted IPs | Disable RTSP if not required
+15,Hikvision,DS-2CD1023G,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+7,Hikvision,DS-2CD2085FWD,Weak Encryption,Medium,High,Upgrade to strong encryption algorithms | Disable deprecated crypto protocols | Ensure firmware supports modern encryption
+6,CP Plus,CP-VAC-D20L2,Outdated Firmware,High,Critical,Upgrade to latest firmware version | Enable automatic firmware updates | Monitor vendor security advisories
+22,CP Plus,CP-UNC-DA41L3,Default Credentials,High,Critical,Change default usernames and passwords | Enforce strong password policy | Disable anonymous access

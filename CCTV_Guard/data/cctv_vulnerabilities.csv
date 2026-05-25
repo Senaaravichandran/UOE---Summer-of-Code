@@ -1,0 +1,43 @@
+device_id,manufacturer,model,vulnerability,severity,reason
+24,Dahua,IPC-HFW2431T,None,Low,No obvious misconfiguration detected
+8,Dahua,NVR5208-8P,Weak Encryption,Medium,Device uses weak or deprecated encryption
+14,CP Plus,CP-UVR-0401E1,Default Credentials,High,Device is using default login credentials
+14,CP Plus,CP-UVR-0401E1,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+14,CP Plus,CP-UVR-0401E1,No Encryption,High,Device communication is unencrypted
+12,Dahua,IPC-HFW1230S,Default Credentials,High,Device is using default login credentials
+12,Dahua,IPC-HFW1230S,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+12,Dahua,IPC-HFW1230S,No Encryption,High,Device communication is unencrypted
+6,CP Plus,CP-VAC-D20L2,Default Credentials,High,Device is using default login credentials
+6,CP Plus,CP-VAC-D20L2,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+6,CP Plus,CP-VAC-D20L2,No Encryption,High,Device communication is unencrypted
+18,CP Plus,CP-EAC-T24PL2,None,Low,No obvious misconfiguration detected
+11,Hikvision,DS-7608NI-I2,Default Credentials,High,Device is using default login credentials
+11,Hikvision,DS-7608NI-I2,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+11,Hikvision,DS-7608NI-I2,Exposed RTSP Stream,High,RTSP stream accessible without authentication
+11,Hikvision,DS-7608NI-I2,No Encryption,High,Device communication is unencrypted
+3,Axis,M3045-V,None,Low,No obvious misconfiguration detected
+22,CP Plus,CP-UNC-DA41L3,Default Credentials,High,Device is using default login credentials
+22,CP Plus,CP-UNC-DA41L3,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+22,CP Plus,CP-UNC-DA41L3,No Encryption,High,Device communication is unencrypted
+13,Axis,M2026-LE,None,Low,No obvious misconfiguration detected
+9,Axis,P3245-LVE,None,Low,No obvious misconfiguration detected
+1,Hikvision,DS-2CD2043G,Default Credentials,High,Device is using default login credentials
+1,Hikvision,DS-2CD2043G,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+1,Hikvision,DS-2CD2043G,Exposed RTSP Stream,High,RTSP stream accessible without authentication
+1,Hikvision,DS-2CD2043G,No Encryption,High,Device communication is unencrypted
+16,Dahua,IPC-HDW1431S,Weak Encryption,Medium,Device uses weak or deprecated encryption
+15,Hikvision,DS-2CD1023G,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+15,Hikvision,DS-2CD1023G,Weak Encryption,Medium,Device uses weak or deprecated encryption
+25,Axis,M3116-LVE,None,Low,No obvious misconfiguration detected
+23,Hikvision,DS-7616NI-Q2,Weak Encryption,Medium,Device uses weak or deprecated encryption
+5,Dahua,DHI-XVR1B04,Default Credentials,High,Device is using default login credentials
+5,Dahua,DHI-XVR1B04,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+5,Dahua,DHI-XVR1B04,No Encryption,High,Device communication is unencrypted
+10,CP Plus,CP-UNC-TA21L3,Weak Encryption,Medium,Device uses weak or deprecated encryption
+21,Hikvision,DS-2CD1623G,Weak Encryption,Medium,Device uses weak or deprecated encryption
+7,Hikvision,DS-2CD2085FWD,Weak Encryption,Medium,Device uses weak or deprecated encryption
+2,Dahua,NVR4104HS,Weak Encryption,Medium,Device uses weak or deprecated encryption
+4,Hikvision,DS-2CD2143G,Default Credentials,High,Device is using default login credentials
+4,Hikvision,DS-2CD2143G,Outdated Firmware,Medium,Firmware is older than recommended security baseline
+4,Hikvision,DS-2CD2143G,Exposed RTSP Stream,High,RTSP stream accessible without authentication
+4,Hikvision,DS-2CD2143G,No Encryption,High,Device communication is unencrypted

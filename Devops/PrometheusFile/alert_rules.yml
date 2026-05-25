@@ -1,0 +1,174 @@
+# EvaSafe Alert Rules for Prometheus
+groups:
+  - name: evasafe.alerts
+    rules:
+      # Service Availability Alerts
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.service }} is down"
+          description: "Service {{ $labels.service }} has been down for more than 1 minute"
+
+      - alert: HighErrorRate
+        expr: (rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on {{ $labels.service }}"
+          description: "Error rate is {{ $value | humanizePercentage }} on {{ $labels.service }}"
+
+      # Performance Alerts
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time on {{ $labels.service }}"
+          description: "95th percentile response time is {{ $value }}s on {{ $labels.service }}"
+
+      - alert: HighCPUUsage
+        expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 90% on {{ $labels.instance }}"
+
+      # Crime Detection Specific Alerts
+      - alert: CrimeDetectionProcessingDelay
+        expr: crime_detection_processing_time_seconds > 30
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Crime detection processing is taking too long"
+          description: "Processing time is {{ $value }}s, which exceeds the 30s threshold"
+
+      - alert: HighCrimeDetectionQueue
+        expr: crime_detection_queue_length > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Crime detection queue is backing up"
+          description: "Queue length is {{ $value }}, which may indicate processing issues"
+
+      # Alert System Alerts
+      - alert: AlertEngineDown
+        expr: up{service="alert-engine"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Alert Engine is down"
+          description: "The alert engine service is not responding"
+
+      - alert: FailedAlertDelivery
+        expr: increase(alert_delivery_failures_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Multiple alert delivery failures"
+          description: "{{ $value }} alert delivery failures in the last 5 minutes"
+
+      # Database Alerts
+      - alert: DatabaseConnectionFailures
+        expr: increase(database_connection_failures_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High database connection failures"
+          description: "{{ $value }} database connection failures in the last 5 minutes"
+
+      - alert: MongoDBReplicationLag
+        expr: mongodb_mongod_replset_member_replication_lag > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MongoDB replication lag is high"
+          description: "Replication lag is {{ $value }}s on {{ $labels.instance }}"
+
+      # Live Feed Alerts
+      - alert: LiveFeedConnectionLost
+        expr: live_feed_active_connections == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No active live feed connections"
+          description: "All live feed connections have been lost"
+
+      - alert: HighVideoProcessingLatency
+        expr: video_processing_latency_seconds > 5
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High video processing latency"
+          description: "Video processing latency is {{ $value }}s on {{ $labels.service }}"
+
+      # Security Alerts
+      - alert: UnauthorizedAccessAttempts
+        expr: increase(unauthorized_access_attempts_total[5m]) > 20
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of unauthorized access attempts"
+          description: "{{ $value }} unauthorized access attempts in the last 5 minutes"
+
+      - alert: SecurityServiceDown
+        expr: up{service=~".*security.*"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Security service is down"
+          description: "Security service {{ $labels.service }} is not responding"
+
+      # Infrastructure Alerts
+      - alert: DiskSpaceWarning
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 15% on {{ $labels.instance }} ({{ $labels.mountpoint }})"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.05
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical disk space on {{ $labels.instance }}"
+          description: "Disk space is below 5% on {{ $labels.instance }} ({{ $labels.mountpoint }})"
+
+      # Container Alerts
+      - alert: ContainerRestarts
+        expr: increase(container_restart_count[1h]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} restarting frequently"
+          description: "Container {{ $labels.name }} has restarted {{ $value }} times in the last hour"

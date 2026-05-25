@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Critical Incident Alert</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+        color: #333333;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 650px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+      }
+      .logo {
+        text-align: center;
+        background-color: #ffffff;
+        padding: 15px 0;
+        border-bottom: 1px solid #eaeaea;
+      }
+      .logo img {
+        height: 40px;
+      }
+      .header {
+        background: linear-gradient(135deg, #ff3b30, #ff2d55);
+        color: white;
+        text-align: center;
+        padding: 25px 30px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .header p {
+        margin: 8px 0 0;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+      .alert-badge {
+        display: inline-block;
+        background-color: rgba(255, 255, 255, 0.25);
+        padding: 5px 12px;
+        border-radius: 50px;
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .priority-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 15px 0 0;
+      }
+      .priority-dot {
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        background-color: #ff2d55;
+        margin: 0 3px;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(0.95);
+          opacity: 0.7;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.95);
+          opacity: 0.7;
+        }
+      }
+      .content {
+        padding: 30px;
+      }
+      .content h2 {
+        font-size: 22px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #222222;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 10px;
+      }
+      .info-box {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-left: 5px solid #ff3b30;
+        margin-bottom: 25px;
+        border-radius: 6px;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      .info-item {
+        margin: 0;
+      }
+      .info-item strong {
+        display: block;
+        font-size: 13px;
+        text-transform: uppercase;
+        color: #666666;
+        margin-bottom: 4px;
+      }
+      .info-item span {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .alert-type {
+        color: #ff3b30;
+        font-weight: 600;
+      }
+      .message {
+        background-color: rgba(255, 59, 48, 0.08);
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+      .actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .button {
+        display: inline-block;
+        padding: 14px 28px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        border-radius: 6px;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+      .primary-button {
+        background-color: #007aff;
+        color: #ffffff;
+        flex: 3;
+      }
+      .primary-button:hover {
+        background-color: #0062cc;
+      }
+      .secondary-button {
+        background-color: #e9ecef;
+        color: #495057;
+        flex: 2;
+      }
+      .secondary-button:hover {
+        background-color: #dee2e6;
+      }
+      .map-container {
+        margin-top: 25px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eaeaea;
+      }
+      .map-placeholder {
+        background-color: #e9ecef;
+        height: 180px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #6c757d;
+        font-size: 14px;
+      }
+      .incident-details {
+        margin-top: 25px;
+        border-top: 1px solid #eaeaea;
+        padding-top: 20px;
+      }
+      .incident-details h3 {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+      .incident-meta {
+        background-color: #f2f4f8;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      .incident-id {
+        font-family: monospace;
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 13px;
+        color: #777777;
+        padding: 20px;
+        border-top: 1px solid #eaeaea;
+        background-color: #fafafa;
+      }
+      .contact-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #eaeaea;
+      }
+      .disclaimer {
+        font-size: 12px;
+        color: #999;
+        margin-top: 15px;
+      }
+      @media (max-width: 600px) {
+        .info-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .actions {
+          flex-direction: column;
+        }
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <!-- Using placeholder for logo image -->
+        <div style="font-size: 24px; font-weight: bold; color: #007aff">
+          Monitoring
+        </div>
+      </div>
+      <div class="header">
+        <h1>🚨 CRITICAL INCIDENT ALERT</h1>
+        <p>AI Surveillance System</p>
+        <div class="alert-badge">IMMEDIATE RESPONSE REQUIRED</div>
+        <div class="priority-indicator">
+          <div class="priority-dot"></div>
+          <div class="priority-dot"></div>
+          <div class="priority-dot"></div>
+        </div>
+      </div>
+      <div class="content">
+        <h2>Suspicious Activity Detected</h2>
+        <div class="info-box">
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Location</strong>
+              <span>Adayar, Chennai</span>
+            </div>
+            <div class="info-item">
+              <strong>Time</strong>
+              <span>11:34 AM, April 14, 2025</span>
+            </div>
+            <div class="info-item">
+              <strong>Alert Type</strong>
+              <span class="alert-type">Physical Assault</span>
+            </div>
+            <div class="info-item">
+              <strong>Confidence Score</strong>
+              <span>97%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="message">
+          <p>
+            AI-powered surveillance system has detected potentially violent
+            activity requiring immediate attention. Our advanced behavior
+            recognition algorithms have identified patterns consistent with
+            physical assault.
+          </p>
+          <p>
+            <strong>Alert Details:</strong> Two individuals engaged in hostile
+            interaction with signs of physical aggression near the south
+            entrance.
+          </p>
+        </div>
+
+        <div class="actions">
+          <a
+            href="https://636c-2409-40f4-aa-6e6-2d39-beb2-6836-98a.ngrok-free.app"
+            class="button primary-button"
+            >View Incident Dashboard</a
+          >
+          <a href="#" class="button secondary-button">Dispatch Security</a>
+        </div>
+
+        <div class="map-container">
+          <div class="map-placeholder">
+            [Interactive Location Map - Click for Directions]
+          </div>
+        </div>
+
+        <div class="incident-details">
+          <h3>Incident Information</h3>
+          <div class="incident-meta">
+            <p style="margin: 0">
+              Incident ID: <span class="incident-id">ZS-20250414-1134-CH</span>
+            </p>
+            <p style="margin: 5px 0 0">
+              Camera: South Building - Entrance #2 (CAM-S04)
+            </p>
+          </div>
+          <p>
+            This incident has been automatically escalated based on threat
+            assessment protocol. Security personnel should respond immediately
+            and follow standard intervention procedures.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        <p>&copy;KREATIVE GENESIS. All rights reserved.</p>
+        <div class="contact-info">
+          <p>Emergency Contact: <strong>+91 74188 87124</strong></p>
+          <p>Support Email: <strong>emergency@unisys.ai</strong></p>
+        </div>
+        <div class="disclaimer">
+          <p>
+            This is an automated alert generated by the AI Surveillance System.
+            Please do not reply to this email.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

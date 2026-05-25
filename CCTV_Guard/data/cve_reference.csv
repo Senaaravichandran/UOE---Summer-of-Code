@@ -1,0 +1,6 @@
+cve_id,vendor,trigger_condition,severity,description
+CVE-2021-36260,Hikvision,outdated_firmware,Critical,Remote command execution via improper input validation
+CVE-2017-7921,Dahua,default_credentials,High,Authentication bypass using default credentials
+CVE-2018-9995,Multiple,rtsp_no_auth,High,Unauthenticated access to RTSP video stream
+CVE-2019-12255,Multiple,no_encryption,Medium,Cleartext transmission of sensitive video data
+CVE-2020-25078,Multiple,weak_encryption,Medium,Use of weak or deprecated encryption algorithms
