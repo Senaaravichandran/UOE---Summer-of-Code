@@ -20,6 +20,12 @@
 *token*
 *tokens*
 
+# Specific secret files
+/AR_Viewer/.env
+/Web_Application/backend/.env
+/Web_Application/backend/.env.*
+*serviceAccount*.json
+
 # Node.js
 node_modules/
 npm-debug.log*
