@@ -117,3 +117,4 @@ temp/
 /My project/
 serviceAccountKey.json
 *.json
+Web_Application/backend/src/config/serviceAccountKey.json
