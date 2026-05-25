@@ -115,3 +115,5 @@ temp/
 /women safety/
 /CCTV_Guard.zip
 /My project/
+serviceAccountKey.json
+*.json
